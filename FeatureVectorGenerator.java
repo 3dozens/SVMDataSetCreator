@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,13 +121,13 @@ public class FeatureVectorGenerator {
 		return result;
 	}
 	
-	public double cosineSimilarity(double[] vector1, double[] vector2) {
+	public double calcCosineSimilarity(double[] vector1, double[] vector2) {
 		
-		return innerProduct(vector1, vector2) / 
-				(absoluteValue(vector1) * absoluteValue(vector2));
+		return calcInnerProduct(vector1, vector2) / 
+				(calcMagnitude(vector1) * calcMagnitude(vector2));
 	}
 	
-	private double innerProduct(double[] vector1, double[] vector2) {
+	private double calcInnerProduct(double[] vector1, double[] vector2) {
 		
 		double result = 0.0;
 		for(int i = 0; i < vector1.length; i++) {
@@ -136,7 +137,10 @@ public class FeatureVectorGenerator {
 		return result;
 	}
 	
-	private double absoluteValue(double[] vector) {
+	/**
+	 * ベクトルの大きさを求めます
+	 */
+	private double calcMagnitude(double[] vector) {
 		
 		double result = 0.0;
 		for(double value : vector) {

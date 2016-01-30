@@ -37,7 +37,7 @@ public class SVMPrinterAndWriter {
 		if (entry == calcTarget)
 		    continue;
 
-		double cosSim = generator.cosineSimilarity(entry.getValue(), calcTarget.getValue());
+		double cosSim = generator.calcCosineSimilarity(entry.getValue(), calcTarget.getValue());
 		System.out.println(calcTarget.getKey());
 		System.out.println("-> " + cosSim);
 	    }
