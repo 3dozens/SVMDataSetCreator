@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.reduls.igo.Morpheme;
 import net.reduls.igo.Tagger;
@@ -12,20 +13,20 @@ public class FeatureVectorGenerator {
 	public Map<String, double[]> generateTFIDFVectors(List<String> documents) {
 
 		// List<word>
-		List<String> words = new ArrayList<String>();
+		List<String> wordList = new ArrayList<String>();
 
 		// Map<document, Map<word, tf>>
-		Map<String, Map<String, Integer>> tfMap = new HashMap<String, Map<String, Integer>>();
+		Map<String, Map<String, Integer>> tfMap = new HashMap<>();
 
 		// Map<word, df>
-		Map<String, Integer> dfMap = new HashMap<String, Integer>();
+		Map<String, Integer> dfMap = new HashMap<>();
 
 		for (String document : documents) {
 
-			List<String> parseResult = parse(document);
+			List<String> parsedWords = parse(document);
 
-			Map<String, Integer> docTFMap = new HashMap<String, Integer>();
-			for (String word : parseResult) {
+			Map<String, Integer> docTFMap = new HashMap<>();
+			for (String word : parsedWords) {
 
 				// �P�ꖈ��TF���v�Z
 				if (docTFMap.containsKey(word)) {
@@ -36,8 +37,8 @@ public class FeatureVectorGenerator {
 				}
 
 				// �P��ꗗ�ɒP���ǉ�
-				if (!words.contains(word)) {
-					words.add(word);
+				if (!wordList.contains(word)) {
+					wordList.add(word);
 				}
 			}
 
@@ -74,9 +75,9 @@ public class FeatureVectorGenerator {
 			}
 
 			// �����x�N�g���𐶐�
-			double[] featureVector = new double[words.size()];
-			for (int i = 0; i < words.size(); i++) {
-				String word = words.get(i);
+			double[] featureVector = new double[wordList.size()];
+			for (int i = 0; i < wordList.size(); i++) {
+				String word = wordList.get(i);
 				if (docTFIDFMap.containsKey(word)) {
 					featureVector[i] = docTFIDFMap.get(word);
 				} else {
@@ -87,23 +88,28 @@ public class FeatureVectorGenerator {
 		}
 
 		// �P��ꗗ��\�� comment outed by Hayasaka
-		System.out.println("=== word list ===");
-		System.out.print("(");
-		for (int i = 0; i < words.size(); i++) {
-			System.out.print((i + 1) + ":" + words.get(i));
-			if (i != words.size() - 1) {
-				System.out.print(", ");
-			}
-		}
-		System.out.println(")");
-		System.out.println(""); 
+//		System.out.println("=== word list ===");
+//		System.out.print("(");
+//		for (int i = 0; i < words.size(); i++) {
+//			System.out.print((i + 1) + ":" + words.get(i));
+//			if (i != words.size() - 1) {
+//				System.out.print(", ");
+//			}
+//		}
+//		System.out.println(")");
+//		System.out.println(""); 
 
 		return featureVectors;
 	}
 
+	/**
+	 * 渡された文字列を形態素解析し、副詞、助詞、助動詞、数でない
+	 * 単語のリストを返します
+	 * @param str 対象の文字列
+	 * @return 単語リスト
+	 */
 	private List<String> parse(String str) {
 
-		// ��͊�̐���
 		Tagger tagger = null;
 		try {
 			tagger = new Tagger("ipadic");
@@ -111,14 +117,14 @@ public class FeatureVectorGenerator {
 			e.printStackTrace();
 		}
 
-		List<Morpheme> list = tagger.parse(str);
+		List<Morpheme> morphemes = tagger.parse(str);
+		List<String> words = morphemes.stream()
+			.filter(m -> !m.feature.contains("副詞") && !m.feature.contains("助詞") 
+				&& !m.feature.contains("助動詞") && !m.feature.contains("数"))
+			.map(m -> m.surface)
+			.collect(Collectors.toList());
 
-		List<String> result = new ArrayList<String>();
-		for (Morpheme morpheme : list) {
-			result.add(morpheme.surface);
-		}
-
-		return result;
+		return words;
 	}
 	
 	public double calcCosineSimilarity(double[] vector1, double[] vector2) {
@@ -142,12 +148,12 @@ public class FeatureVectorGenerator {
 	 */
 	private double calcMagnitude(double[] vector) {
 		
-		double result = 0.0;
-		for(double value : vector) {
-			result += Math.pow(value, 2);
-		}
-		result = Math.sqrt(result);
+		double magnitudeBeforeSqrt = Arrays.stream(vector)
+			.map(v -> Math.pow(v, 2))
+			.sum();
 		
-		return result;
+		double magnitude = Math.sqrt(magnitudeBeforeSqrt);
+		
+		return magnitude;
 	}
 }
