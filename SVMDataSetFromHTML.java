@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +20,13 @@ public class SVMDataSetFromHTML {
   
     public final static void main(String[] args) throws Exception {
 
-		List<String> articleURLStrs = new ArrayList<>(); // Stringの記事URLリスト。あとでURLオブジェクトに変換する
+		List<String> articleURLs = new ArrayList<>();
 
 		// 経済ニュースのURLを取得する
 		// 1ループあたり"約"25件の記事URLを取得する。なぜか件数が1〜2件ズレる。境界値の問題かもしれない
 		int economyArticleNum = 0; // 件数がズレてしまうため、定数の記事数を使わずにsize()で実際の件数を数える
 		for (int i = 1; i <= ARTICLE_NUMBER_PER_CATEGORY / 25; i++) {
+			
 			// Yahooニュースの経済トップページを取得
 			Document economyTopPage = Jsoup.connect("http://news.yahoo.co.jp/hl")
 					.data("c", "bus_all")
@@ -36,12 +36,12 @@ public class SVMDataSetFromHTML {
 			// 新着記事リストから記事URLを抽出
 			Element articleListUl = economyTopPage.getElementsByClass("listBd").get(0);
 			Elements Atags = articleListUl.getElementsByTag("a");
-			articleURLStrs.addAll(Atags.stream().map(a -> a.attr("href")).collect(Collectors.toList()));
-			economyArticleNum = articleURLStrs.size(); // 件数がズレてしまうため、定数の記事数を使わずにsize()で実際の件数を数える
+			articleURLs.addAll(Atags.stream().map(a -> a.attr("href")).collect(Collectors.toList()));
+			economyArticleNum = articleURLs.size(); // 件数がズレてしまうため、定数の記事数を使わずにsize()で実際の件数を数える
 		}
 
 		// スポーツニュースのURLを取得する
-		// 1ループあたり25件の記事URLを取得する
+		// 1ループあたり"約"25件の記事URLを取得する
 		for (int i = 1; i <= ARTICLE_NUMBER_PER_CATEGORY / 25; i++) {
 			// Yahooニュースのスポーツトップページを取得
 			Document sportsTopPage = Jsoup.connect("http://news.yahoo.co.jp/hl")
@@ -52,14 +52,7 @@ public class SVMDataSetFromHTML {
 			// 新着記事リストから記事URLを抽出
 			Element articleListUl = sportsTopPage.getElementsByClass("listBd").get(0);
 			Elements Atags = articleListUl.getElementsByTag("a");
-			articleURLStrs.addAll(Atags.stream().map(a -> a.attr("href")).collect(Collectors.toList()));
-		}
-
-		// StringのURLからURLオブジェクトに変換
-		// FIXME 無関係な下位問題？
-		List<URL> articleURLs = new ArrayList<>();
-		for (String articleURLStr : articleURLStrs) {
-			articleURLs.add(new URL(articleURLStr));
+			articleURLs.addAll(Atags.stream().map(a -> a.attr("href")).collect(Collectors.toList()));
 		}
 
 		List<String> docs = URLProcessor.convertURLsToDocs(articleURLs);
@@ -74,16 +67,6 @@ public class SVMDataSetFromHTML {
 
 		pw.close();
 	
-  }
-  
+    }
+    
 }
-
-/* TODO: スポーツと経済のニュースを500個ずつ計1000個取ってきて、それぞれ250個ずつをTraining Setとし、残りをTest Dataとして、SVMで機械学習する
- * 手順: 
- * 1．Training Setを作るプログラムを作る
- * 2．word listを全体で統一するために、FeatureVectorは一つにまとめる！
- * 3. targetの指定の方法を考える！
- * 
- * FIXME クロールするの、Jsoup使えばええやん…なんで生URLをnewしてんねん…
-*/
-

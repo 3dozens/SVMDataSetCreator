@@ -83,7 +83,8 @@ public class SVMPrinterAndWriter {
 		for (Map.Entry<String, double[]> featureVector : featureVectors.entrySet()) {
 			if (docCount <= targetBorder) target = 1; // ドキュメントがtargetBorder個目より下であれば、targetを1に設定する
 			else target = -1;
-
+			
+//			pw.println(featureVector.getKey()); // for debug
 			pw.print(target + " ");
 
 			// 1ワード(次元)ごとのループ
