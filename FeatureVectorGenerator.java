@@ -88,7 +88,6 @@ public class FeatureVectorGenerator {
 			featureVectors.put(document, featureVector);
 		}
 
-		// �P��ꗗ��\�� comment outed by Hayasaka
 //		System.out.println("=== word list ===");
 //		System.out.print("(");
 //		for (int i = 0; i < words.size(); i++) {
