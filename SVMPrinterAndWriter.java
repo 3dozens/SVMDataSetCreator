@@ -36,7 +36,7 @@ public class SVMPrinterAndWriter {
 			for (Entry<String, double[]> calcTarget : featureVectors.entrySet()) {
 				if (entry == calcTarget) continue;
 
-				double cosSim = generator.calcCosineSimilarity(featureVector, calcTarget.getValue()); // value = featureVector値
+				double cosSim = generator.calcCosineSimilarity(featureVector, calcTarget.getValue()); // Value = featureVector値
 				System.out.println(calcTarget.getKey()); // Key = ドキュメント
 				System.out.println("-> " + cosSim);
 			}
@@ -80,17 +80,17 @@ public class SVMPrinterAndWriter {
 
 		// 1ドキュメントごとのループ
 		int docCount = 1;
-		for (Map.Entry<String, double[]> entry : featureVectors.entrySet()) {
+		for (Map.Entry<String, double[]> featureVector : featureVectors.entrySet()) {
 			if (docCount <= targetBorder) target = 1; // ドキュメントがtargetBorder個目より下であれば、targetを1に設定する
 			else target = -1;
 
 			pw.print(target + " ");
 
-			// 1ワードごとのループ
-			int wordCount = 1;
-			for (double featureVector : entry.getValue()) {
-				if (featureVector != 0.0) pw.print(wordCount + ":" + featureVector + " ");
-				wordCount++;
+			// 1ワード(次元)ごとのループ
+			int dimension = 1;
+			for (double vectorValue : featureVector.getValue()) {
+				if (vectorValue != 0.0) pw.print(dimension + ":" + vectorValue + " ");
+				dimension++;
 			}
 
 			pw.println();
