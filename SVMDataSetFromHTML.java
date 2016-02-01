@@ -38,7 +38,7 @@ public class SVMDataSetFromHTML {
 			Element articleListUl = economyTopPage.getElementsByClass("listBd").get(0);
 			Elements Atags = articleListUl.getElementsByTag("a");
 			articleURLStrs.addAll(Atags.stream().map(a -> a.attr("href")).collect(Collectors.toList()));
-			economyArticleNum = articleURLStrs.size();
+			economyArticleNum = articleURLStrs.size(); // 件数がズレてしまうため、定数の記事数を使わずにsize()で実際の件数を数える
 		}
 
 		// スポーツニュースのURLを取得する
@@ -77,44 +77,6 @@ public class SVMDataSetFromHTML {
 	
   }
   
-  /**
-   * 経済のニュース記事のURLリストを返します
-   * @return 経済ニュース記事のURLリスト
-   * @throws MalformedURLException 例外
-   */
-  private static List<URL> createEconomyURLList() throws MalformedURLException {
-	  List<URL> economyURLs = new ArrayList<>();
-	  
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151201-00000005-tospoweb-ent"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151130-00000048-zdn_n-sci"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20160131-00000002-awire-bus_all"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151130-00000048-zdn_n-sci"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151130-00000048-zdn_n-sci"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151130-00000048-zdn_n-sci"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151130-00000048-zdn_n-sci"));
-	  economyURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20151130-00000048-zdn_n-sci"));
-	  
-	  return economyURLs;
-  }
-  
-  /**
-   * スポーツのニュース記事のURLリストを返します
-   * @return スポーツニュース記事のURLリスト
-   * @throws MalformedURLException 例外
-   */
-  private static List<URL> createSportsURLList() throws MalformedURLException {
-	  List<URL> sportsURLs = new ArrayList<>();
-	  
-	  sportsURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20160127-00000062-dal-base"));
-	  sportsURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20160127-00000213-ism-base"));
-	  sportsURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20160127-00000093-sph-base"));
-	  sportsURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20160127-00000092-sph-base"));
-	  sportsURLs.add(new URL("http://headlines.yahoo.co.jp/hl?a=20160127-00010008-fullcount-base"));
-	  
-	  return sportsURLs;
-  }
-  
-  
 }
 
 /* TODO: スポーツと経済のニュースを500個ずつ計1000個取ってきて、それぞれ250個ずつをTraining Setとし、残りをTest Dataとして、SVMで機械学習する
@@ -123,7 +85,6 @@ public class SVMDataSetFromHTML {
  * 2．word listを全体で統一するために、FeatureVectorは一つにまとめる！
  * 3. targetの指定の方法を考える！
  * 
- * Training SetとTest Dataは一度に一緒に作って、それをわける！単語とfeature vectorのインデックスの紐付けがなくなってしまう！ Done
  * FIXME クロールするの、Jsoup使えばええやん…なんで生URLをnewしてんねん…
 */
 
