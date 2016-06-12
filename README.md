@@ -1,0 +1,3 @@
+# SVMDataSetCreator
+
+Yahooニュース記事のカテゴリから、ニュース記事をクラスタリングするModelを作るためのSVM用Training Setを生成します。
